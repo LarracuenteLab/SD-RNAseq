@@ -1,0 +1,257 @@
+---
+title: "Rsp_SD"
+author: "Logan Edvalson"
+date: "2025-08-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Add Packages to Library
+
+```{r}
+library(WGCNA)
+library(readr)
+library(tidyverse)
+library(ggrepel) 
+library(DESeq2)
+library(GenomicFeatures)
+library(clusterProfiler)
+library(org.Dm.eg.db)
+library(ReactomePA)
+library(stringr)
+```
+
+# Load custom functions
+
+```{r}
+miRNA_List <- read.table("miRNA.list")
+
+load_counts <- function(file_paths, groups, filter_pattern = "\\)n|dodeca|undeca|^_", miRNA_list = NULL) {
+  
+  if (length(file_paths) != length(groups)) {
+    stop("Number of file paths must match number of group labels.")
+  }
+  # Build regex if multiple patterns provided
+  if (!is.null(filter_pattern)) {
+    if (length(filter_pattern) > 1) {
+      filter_pattern <- paste(filter_pattern, collapse = "|")
+    }
+  }
+  # Read, round, and optionally filter each file
+  count_list <- lapply(file_paths, function(path) {
+    df <- read.table(path)
+    if (any(df$V1 %in% c("L-Rsp_SAT", "R-Rsp_SAT"))) {
+    df <- rbind(data.frame(V1 = "Rsp_SAT", V2 = sum(df$V2[df$V1 %in% c("L-Rsp_SAT", "R-Rsp_SAT")]), V3 = sum(df$V3[df$V1 %in% c("L-Rsp_SAT", "R-Rsp_SAT")])), df)
+    }
+    df <- df[!df$V1 %in% c("L-Rsp_SAT", "R-Rsp_SAT"),]
+    df <- data.frame(V1 = df$V1, V2 = round(as.numeric(df$V2)))
+    if (!is.null(filter_pattern)) {
+      df <- df %>%
+        filter(!str_detect(V1, regex(filter_pattern, ignore_case = TRUE)))
+    }
+    df
+  })
+  # Check all files have same feature IDs in same order
+  for (i in seq_along(count_list)[-1]) {
+    if (!identical(count_list[[1]]$V1, count_list[[i]]$V1)) {
+      stop("Row names differ between files. Ensure same ordering and content.")
+    }
+  }
+  # Combine counts into matrix
+  counts <- do.call(cbind, lapply(count_list, `[[`, "V2"))
+  colnames(counts) <- groups
+  rownames(counts) <- count_list[[1]]$V1
+  # Remove miRNA entries if provided
+  if (!is.null(miRNA_list)) {
+    counts <- counts[!rownames(counts) %in% miRNA_list$V1, ]
+  }
+  return(counts)
+}
+
+
+DESeq2_DE <- function(countMatrix, EXP, CTRL, 
+                      COLOR = "red", 
+                      DOWNCOLOR = "grey",
+                      TYPE = c("smRNA", "totRNA"), 
+                      BACKGROUND = c("Iso1", "Gla"), 
+                      plotWidth = 5,
+                      plotHeight = 5,
+                      batch = NULL) {
+  
+#########Build DESeq2 Object################
+  
+  plotPrefix <- paste0(EXP, "_", CTRL, "_", TYPE, "_", BACKGROUND)
+  # Derive groups from EXP and CTRL
+  groups <- colnames(countMatrix)
+  # Checks if column names are unique, if not unique adds "_#" suffix
+  if (is.null(colnames(countMatrix)) || anyDuplicated(colnames(countMatrix)) > 0) {
+    colnames(countMatrix) <- paste0(groups, "_", seq_along(groups))
+  }
+  # Build colData with conditions
+  if (is.null(batch) || length(unique(batch)) == 1) {
+  colData <- data.frame(condition = factor(groups))
+  } else {
+  colData <- data.frame(condition = factor(groups), batch = factor(batch))
+  }
+  rownames(colData) <- colnames(countMatrix)
+  # Set CTRL as the reference level
+  colData$condition <- relevel(colData$condition, ref = CTRL)
+  countMatrix <- countMatrix[rowSums(countMatrix)>10,]
+  # Build DESeq2 object
+  
+if (is.null(batch) || length(unique(batch)) == 1 ) {  
+  dds <- DESeqDataSetFromMatrix(
+    countData = countMatrix,
+    colData = colData,
+    design = ~ condition
+  )
+} else {
+  dds <- DESeqDataSetFromMatrix(
+    countData = countMatrix,
+    colData = colData,
+    design = ~ batch + condition
+  )
+}
+#########Run DESeq2################
+  
+  dds <- DESeq(dds)
+  
+###########Get normalized Counts#########
+  
+  # Get normalized counts from DESeq2 object
+  norm_counts <- counts(dds, normalized = TRUE)
+  # Turn into a data frame for easy manipulation
+  norm_df <- data.frame(norm_counts)
+  assign(paste0("normCounts", "_", EXP, "_", CTRL, "_", BACKGROUND, "_", TYPE), norm_df, envir = .GlobalEnv)
+  
+###########Get DE Results#########
+  
+  results <- results(dds, contrast = c("condition", EXP, CTRL), pAdjustMethod = "BH")
+  fullTable <<- data.frame(Name = rownames(results), Mean = results$baseMean, LogFC = results$log2FoldChange, pValue = results$pvalue, p.Adj = results$padj)
+#########Make PCA plot############
+  rld <- rlog(dds, blind = TRUE)
+  pcaData <- plotPCA(rld, intgroup = "condition", returnData = TRUE)
+  percentVar <- round(100 * attr(pcaData, "percentVar"))
+  print(ggplot(pcaData, aes(PC1, PC2, color = group)) +
+    geom_point(size = 8) +
+    labs(x = paste0("PC1: ", percentVar[1], "% variance"), y = paste0("PC2: ", percentVar[2], "% variance")) +
+    theme_classic(base_size = 20) +
+    theme(axis.text = element_text(size = 20), axis.title = element_text(size = 30), legend.text = element_text(size = 20), legend.title = element_text(size = 30))
+  ) 
+  ggsave(paste0(plotPrefix, "_PCA.pdf"), width = plotWidth, height = plotHeight, bg = "transparent")
+#########Add Symbols and Chromosome to DE Result#########
+  if (TYPE == "totRNA") {
+  CHR <- AnnotationDbi::select(org.Dm.eg.db, keys = fullTable$Name, columns = "CHR", keytype = "FLYBASE")
+  SYMBOL <- bitr(fullTable$Name, fromType = "FLYBASE", toType = "SYMBOL", OrgDb = "org.Dm.eg.db")
+  fullTable <- merge(fullTable, SYMBOL, by.x = "Name", by.y = "FLYBASE", all.x = TRUE)
+  fullTable$SYMBOL[is.na(fullTable$SYMBOL)] <- fullTable$Name[is.na(fullTable$SYMBOL)]
+  fullTable <- merge(fullTable, CHR, by.x = "Name", by.y = "FLYBASE", all.x = TRUE)
+  }
+  
+  fullTable$diffexpressed <- "NO"
+  fullTable$diffexpressed[fullTable$p.Adj <= 0.01 & fullTable$LogFC > 0] <- "UP"
+  fullTable$diffexpressed[fullTable$p.Adj <= 0.01 & fullTable$LogFC < 0] <- "DOWN"
+
+  sigGenes <- fullTable[!is.na(fullTable$p.Adj) & fullTable$p.Adj <= 0.01, ]
+  sigGenes <- sigGenes[order(abs(sigGenes$LogFC), decreasing = TRUE), ]
+
+  if (!TYPE %in% c("totRNA")) {
+    sigGenes <- sigGenes[!grepl("^FBgn", sigGenes$Name), ]
+    fullTable$delabel <- ifelse(fullTable$Name %in% head(sigGenes$Name, n = 5),
+                              fullTable$Name, NA)
+  } else {
+    fullTable$delabel <- ifelse(fullTable$Name %in% head(sigGenes$Name, n = 5),
+                              fullTable$SYMBOL, NA)
+  }
+  fullTable$diffexpressed_labeled <- fullTable$diffexpressed
+  fullTable$diffexpressed_labeled[fullTable$diffexpressed %in% c("UP", "DOWN") & !is.na(fullTable$delabel)] <- "Interesting"
+  
+  write_tsv(na.omit(fullTable[fullTable$p.Adj <= 0.01 & abs(fullTable$LogFC) >= 0.5,1:6]), paste0("supplementalTables/", plotPrefix, "_DE.tsv"))
+###########Make Volcano Plot##########################
+  print(ggplot(data = fullTable, aes(x = LogFC, y = -log10(p.Adj), col = diffexpressed_labeled, label = delabel)) +
+    geom_vline(xintercept = c(0,0), col = "black", linetype = 'dashed', size = 2) +
+    geom_hline(yintercept = -log10(0.01), col = "black", linetype = 'dashed', size = 2) +
+    geom_point(size = 3) +
+    scale_color_manual(values = c("DOWN" = DOWNCOLOR, "NO" = "black", "UP" = COLOR, "Interesting" = "magenta"), labels = c("DOWN" = "Downregulated", "NO" = "Not significant", "UP" = "Upregulated")) +
+    labs(color = 'Differentially Expressed') +
+    theme_classic() +
+    theme(axis.text = element_text(size = 40), legend.position = "none") +
+    geom_label_repel(aes(label = delabel), size = 10, max.overlaps = Inf, color = "black", fill = "white", label.size = 0.4, box.padding = 3, point.padding = 0.5, segment.color = "magenta", segment.size = 0.3, fontface = "bold")) 
+
+  ggsave(paste0(plotPrefix, "_Volcano.pdf"), width = plotWidth, height = plotHeight, bg = "transparent")
+##########Save as Object in .GlobalEnv################
+  assign(paste0(EXP, "_", CTRL, "_", TYPE, "_", BACKGROUND), fullTable, envir = .GlobalEnv)
+}
+
+TPM_calc <- function(gene_list, countFile, gtfFile = "dmel-all-r6.63.gtf") {
+  # Build TxDb from GTF
+  txdb <- makeTxDbFromGFF(gtfFile, format = "gtf")
+  exons_by_gene <- exonsBy(txdb, by="gene")
+  reducedExons <- GenomicRanges::reduce(exons_by_gene)
+  
+  # Calculate gene lengths in kb
+  gene_lengths <- sum(width(reducedExons))
+  gene_lengths_kb <- gene_lengths / 1000
+  gene_length_df <- data.frame(
+    gene_id = names(gene_lengths_kb),
+    length_kb = as.numeric(gene_lengths_kb)
+  )
+  
+  # Find overlapping genes between counts & lengths
+  shared_genes <- intersect(countFile$Name, gene_length_df$gene_id)
+  counts <- countFile$NumReads[match(shared_genes, countFile$Name)]
+  lengths <- gene_length_df$length_kb[match(shared_genes, gene_length_df$gene_id)]
+  
+  # Scaling factor (like library size normalization)
+  scalingFactor <- sum(counts / lengths) / 1e6
+  
+  # Restrict to user-specified genes
+  selected_genes <- intersect(gene_list, shared_genes)
+  sel_counts <- countFile$NumReads[match(selected_genes, countFile$Name)]
+  sel_lengths <- gene_length_df$length_kb[match(selected_genes, gene_length_df$gene_id)]
+  
+  # TPM calculation
+  tpm <- (sel_counts / sel_lengths) / scalingFactor
+  
+  # Return dataframe: gene_id + TPM
+  return(data.frame(
+    gene_id = selected_genes,
+    TPM = tpm,
+    stringsAsFactors = FALSE
+  ))
+}
+
+WGCNA_PangeaDotPlot <- function(PANGEA_Table, dotplotprefix = "dotplot", numSets = 10, plotWidth = 8, plotHeight = 12) {
+data <- PANGEA_Table[PANGEA_Table$`Benjamini & Hochberg` <= 0.05,]
+
+PANGEA_DotPlotData <- data.frame(geneSet = data$`Gene Set Name`, percentGenes = data$`Percentage Genes in Gene Set`, Count = data$`Count Overlap Gene`, pval = data$`P value`)
+
+PANGEA_DotPlotData <- PANGEA_DotPlotData %>%
+  group_by(geneSet) %>%
+  slice_min(order_by = pval, n = 1) %>%   # keep the row with smallest pval
+  ungroup()
+
+PANGEA_DotPlotData <- PANGEA_DotPlotData[order(PANGEA_DotPlotData$percentGenes, decreasing = TRUE),]
+ordered_levels <- rev(PANGEA_DotPlotData$geneSet[1:numSets])
+PANGEA_DotPlotData <- PANGEA_DotPlotData[1:numSets,]
+PANGEA_DotPlotData$geneSet <- factor(PANGEA_DotPlotData$geneSet, levels = ordered_levels)
+
+print(ggplot(PANGEA_DotPlotData, aes(x = percentGenes, y = geneSet, size = Count, color = pval)) +
+  geom_point(alpha = 0.8) +
+  scale_size_continuous(range = c(3, 12)) +   # control dot size
+  scale_color_gradient(low = "dodgerblue3", high = "red3") +  # nice continuous color scale
+  theme_minimal(base_size = 14) +
+  labs(x = "% Genes in Set", y = "Gene Set", size = "Count", color = "P.adj") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10), axis.text.x = element_text(size = 30),legend.position = "right", axis.title.x = element_text(size = 40) ,axis.title.y = element_blank(), legend.text = element_text(size = 25), legend.title = element_text(size = 25, vjust = 2)))
+
+ggsave(paste0(dotplotprefix, "_PANGEA_DotPlot.pdf"), width = plotWidth, height = plotHeight, bg = "transparent")
+}
+
+extractCPM <- function(readTable, element) {
+  readTable$V2[grepl(element, readTable$V1) == TRUE] / (sum(readTable$V2)/1000000)
+}
+```

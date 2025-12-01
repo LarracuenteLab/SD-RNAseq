@@ -1,0 +1,1031 @@
+---
+title: "Rsp_SD_Figures"
+author: "Logan Edvalson"
+date: "2025-11-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Figure 1B
+
+```{r}
+# CPM graph for Rsp smRNAs
+R16_1 <- read.table("smRNA_counts/all_summedbyFam/R16_Iso1_1_R_R1.out_fam")
+R16_2 <- read.table("smRNA_counts/all_summedbyFam/R16_Iso1_2_R1.out_fam")
+R16_3 <- read.table("smRNA_counts/all_summedbyFam/R16_Iso1_3_R1.out_fam")
+R16_4 <- read.table("smRNA_counts/all_summedbyFam/R16cnbw_1_S6_R1_001.out_fam")
+R16_5 <- read.table("smRNA_counts/all_summedbyFam/R16cnbw_2_S10_R1_001.out_fam")
+R16_6 <- read.table("smRNA_counts/all_summedbyFam/R16cnbw_R1.out_fam")
+SDMad_1 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_1_R1.out_fam")
+SDMad_2 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_2_R1.out_fam")
+SDMad_3 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_3_R1.out_fam")
+SDMad_4 <- read.table("smRNA_counts/all_summedbyFam/SDcnbw_1_S5_R1_001.out_fam")
+SDMad_5 <- read.table("smRNA_counts/all_summedbyFam/SDcnbw_2_S9_R1_001.out_fam")
+SDMad_6 <- read.table("smRNA_counts/all_summedbyFam/SDcnbw_R1.out_fam")
+SDRev_1 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_1_R1.out_fam")
+SDRev_2 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_2_R1.out_fam")
+SDRev_3 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_3_R1.out_fam")
+SDRev_4 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_1_S18_R1_001.out_fam")
+SDRev_5 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_2_S4_R1_001.out_fam")
+SDRev_6 <- read.table("smRNA_counts/all_summedbyFam/reverseSd_Iso1_3_S5_R1_001.out_fam")
+SD5_1 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_1_R1.out_fam")
+SD5_2 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_2_R1.out_fam")
+SD5_3 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_3_R1.out_fam")
+SD5_4 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_1_S14_R1_001.out_fam")
+SD5_5 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_2_S15_R1_001.out_fam")
+SD5_6 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_3_S16_R1_001.out_fam")
+
+element <- "Rsp"
+R16_CPM <- mean(extractCPM(R16_1, element), extractCPM(R16_2, element), extractCPM(R16_3, element),extractCPM(R16_4, element),extractCPM(R16_5, element),extractCPM(R16_6, element))
+R16_StD <- sd(c(extractCPM(R16_1, element), extractCPM(R16_2, element), extractCPM(R16_3, element),extractCPM(R16_4, element),extractCPM(R16_5, element),extractCPM(R16_6, element)))
+SDMad_CPM <- mean(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element), extractCPM(SDMad_4), extractCPM(SDMad_5), extractCPM(SDMad_6))
+SDMad_StD <- sd(c(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element), extractCPM(SDMad_4, element), extractCPM(SDMad_5, element), extractCPM(SDMad_6, element)))
+SDRev_CPM <- mean(extractCPM(SDRev_1, element), extractCPM(SDRev_2, element), extractCPM(SDRev_3, element), extractCPM(SDRev_4, element), extractCPM(SDRev_5, element), extractCPM(SDRev_6, element))
+SDRev_StD <- sd(c(extractCPM(SDRev_1, element), extractCPM(SDRev_2, element), extractCPM(SDRev_3, element), extractCPM(SDRev_4, element), extractCPM(SDRev_5, element), extractCPM(SDRev_6, element)))
+SD5_CPM <- mean(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element), extractCPM(SD5_4, element), extractCPM(SD5_5, element), extractCPM(SD5_6, element))
+SD5_StD <- sd(c(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element), extractCPM(SD5_4, element), extractCPM(SD5_5, element), extractCPM(SD5_6, element)))
+
+data <- data.frame(Group = c("R16/Iso1", "SDMad/Iso1", "SDRev/Iso1","SD5/Iso1"), Mean = c(R16_CPM, SDMad_CPM, SDRev_CPM, SD5_CPM), STDev = c(R16_StD, SDMad_StD, SDRev_StD, SD5_StD))
+
+data$Group <- factor(data$Group, levels = c("R16/Iso1", "SDMad/Iso1", "SDRev/Iso1","SD5/Iso1"))
+
+upper <- data$Mean + data$STDev
+lower <- data$Mean - data$STDev
+
+ggplot(data, aes(y = Mean, fill = Group)) +
+    geom_bar(aes(x = Group, y = Mean), stat = "identity", width = 0.6) +
+    scale_fill_manual(values=c("gray", "seagreen", "darkgoldenrod2", "dodgerblue3")) +
+    geom_errorbar(aes(x = Group, ymin = lower, ymax = upper), width = 0.1) +
+    labs(x = NULL, y = "Mean CPM ± StDev") +
+    theme_classic() +
+    theme(legend.position = "none", axis.text.x = element_text(size = 24), axis.text.y = element_text(size = 15), axis.title.x = element_text(size = 28), axis.title.y = element_text(size = 25))
+
+ggsave("smRNA_CPMPlot_Iso1.pdf", width = 10, height = 6, units = c("in"), bg = "transparent")
+```
+
+# Figure 1C
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  logFC_SDMad = SDMad_R16_smRNA_Iso1$LogFC[match(piRNALoci, SDMad_R16_smRNA_Iso1$Name)], logFC_SDRev = SDMadRev_R16_smRNA_Iso1$LogFC[match(piRNALoci, SDMadRev_R16_smRNA_Iso1$Name)], logFC_SD5 = SD5_R16_smRNA_Iso1$LogFC[match(piRNALoci, SD5_R16_smRNA_Iso1$Name)], 
+  p.Adj_SDMad = SDMad_R16_smRNA_Iso1$p.Adj[match(piRNALoci, SDMad_R16_smRNA_Iso1$Name)], p.Adj_SDRev = SDMadRev_R16_smRNA_Iso1$p.Adj[match(piRNALoci, SDMadRev_R16_smRNA_Iso1$Name)], p.Adj_SD5 = SD5_R16_smRNA_Iso1$p.Adj[match(piRNALoci, SD5_R16_smRNA_Iso1$Name)])
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 5) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "Log2FC") +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  )) +
+  scale_y_discrete(labels = c(
+    "SDMad" = "SDMad/Iso1",
+    "SDRev" = "SDRev/Iso1",
+    "SD5" = "SD5/Iso1"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 15))
+
+ggsave("smRNA_HeatPlot_Iso1.pdf", width = 10, height = 3, bg = "transparent")
+```
+
+#Figure 2A
+
+```{r}
+SDMad_R16_DEList <- SDMad_R16_totRNA_Gla[SDMad_R16_totRNA_Gla$p.Adj <= 0.05,]
+SDMad_R16_DEList_Names <- SDMad_R16_DEList$Name
+
+SD5_R16_DEList <- SD5_R16_totRNA_Gla[SD5_R16_totRNA_Gla$p.Adj <= 0.05,]
+SD5_R16_DEList_Names <- SD5_R16_DEList$Name
+
+individualization_GeneSet <- read.table("Individualization_GeneSet.txt")
+colnames(individualization_GeneSet) <- c("SYMBOL", "FLYBASE")
+
+SDMad_data <- SDMad_R16_totRNA_Gla[SDMad_R16_totRNA_Gla$Name %in% individualization_GeneSet$FLYBASE,]
+SD5_data <- SD5_R16_totRNA_Gla[SD5_R16_totRNA_Gla$Name %in% individualization_GeneSet$FLYBASE,]
+merged_Data_Gla <- merge(SDMad_data, SD5_data, by = "Name")
+
+indData <- na.omit(data.frame(Gene = merged_Data_Gla$SYMBOL.x, logFC_SDMad = merged_Data_Gla$LogFC.x, p.Adj_SDMad = merged_Data_Gla$p.Adj.x, logFC_SD5 = merged_Data_Gla$LogFC.y, p.Adj_SD5 = merged_Data_Gla$p.Adj.y))
+
+write_tsv(indData, "supplementalTables/individualizationTable_Gla.tsv")
+
+df_long_indData <- indData %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    indData %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long_indData, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "log2FC") +
+  theme_minimal() +
+  geom_text(aes(label = sig, angle = 90), color = "black", size = 10, vjust = 0.75) +
+  theme(axis.text.x = element_text(size = 20, angle = 45, hjust = 1, face = "italic"), axis.text.y = element_text(size = 30), axis.title = element_blank(), legend.text = element_text(size = 40), legend.title = element_text(size = 40), legend.key.size = unit(0.5, "in")) +
+  scale_y_discrete(labels = c("SDMad" = "SDMad/Gla", "SD5" = "SD5/Gla"))
+
+ggsave("individualization_HeatPlot.pdf", width = 25, height = 6, bg = "transparent")
+```
+
+#Figure 2B
+
+```{r}
+plotData <- bind_rows(SDMadComp, SD5Comp)
+
+plotData <- plotData %>%
+  mutate(sig = case_when(
+    padj <= 0.001 ~ "***",
+    padj <= 0.01  ~ "**",
+    padj <= 0.05  ~ "*",
+    TRUE ~ ""
+  ))
+
+ggplot(plotData, aes(x = condition, y = Module, fill = difference)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 10) +
+  scale_fill_gradient2(
+    low = "dodgerblue3",
+    mid = "white",
+    high = "red2",
+    midpoint = 0,
+    name = "Difference"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 30),
+    axis.text.y = element_text(size = 20),
+    axis.title = element_blank(),
+    plot.title = element_text(hjust = 0.5),
+    legend.justification = c("right", "center"),
+    legend.text = element_text(size = 20),
+    legend.title = element_text(size = 20)) +
+  scale_y_discrete(labels = c(
+    "MEyellow" = "Module A",
+    "MEturquoise" = "Module B",
+    "MEred" = "Module C",
+    "MEpink" = "Module D",
+    "MEgrey" = "Module E",
+    "MEgreen" = "Module F",
+    "MEbrown" = "Module G",
+    "MEblue" = "Module H",
+    "MEblack" = "Module I"
+    )) +
+  scale_x_discrete((labels = c(
+    "SDMad" = "SDMad",
+    "SD5" = "SD5"
+  )))
+
+ggsave("WGCNA_HeatPlot.pdf", width = 6, height = 15, bg = "transparent")
+
+B_DotPlotData <- read_csv("PANGEA_Results/Module_B_PANGEA.csv")
+G_DotPlotData <- read_csv("PANGEA_Results/Module_G_PANGEA.csv")
+
+A_DotPlotData <- read_csv("PANGEA_Results/Module_A_PANGEA.csv")
+H_DotPlotData <- read_csv("PANGEA_Results/Module_H_PANGEA.csv")
+
+C_DotPlotData <- read_csv("PANGEA_Results/Module_C_PANGEA.csv")
+F_DotPlotData <- read_csv("PANGEA_Results/Module_F_PANGEA.csv")
+
+WGCNA_PangeaDotPlot(H_DotPlotData, dotplotprefix = "Module_H", numSets = 20, plotWidth = 13, plotHeight = 24)
+WGCNA_PangeaDotPlot(B_DotPlotData, dotplotprefix = "Module_B", numSets = 20, plotWidth = 16, plotHeight = 24)
+
+WGCNA_PangeaDotPlot(G_DotPlotData, dotplotprefix = "Module_G")
+WGCNA_PangeaDotPlot(A_DotPlotData, dotplotprefix = "Module_A")
+
+
+WGCNA_PangeaDotPlot(C_DotPlotData, dotplotprefix = "Module_C")
+WGCNA_PangeaDotPlot(F_DotPlotData, dotplotprefix = "Module_F")
+```
+
+#Figure 3B
+
+```{r}
+#Testis kipferl qPCR
+data <- data.frame(Group = c("Rsp", "359bp"), Mean = c(1.94, 2.85), STDev = c(0.82, 1.63), pVal = c("P=0.038", "P=0.064"))
+
+ upper <- data$Mean + data$STDev
+  lower <- data$Mean - data$STDev
+  
+  data$Genotype <- factor(data$Group, levels = data$Group)
+  
+  ggplot(data, aes(y = Mean, fill = Group)) +
+    geom_bar(aes(x = Group, y = Mean), stat = "identity", width = 0.6) +
+    scale_fill_manual(values=c("chocolate4", "royalblue3")) +
+    geom_errorbar(aes(x = Group, ymin = lower, ymax = upper), width = 0.1) +
+    geom_text(aes(x = Group, label = pVal, y = upper + 0.5), size = 5) +
+    geom_hline(yintercept=1, linetype='dashed', col = 'red', size = 1) +
+    labs(y = "Fold Change ± StDv") +
+    theme_minimal() +
+    theme(legend.position = "none", axis.text.x = element_text(size = 20), axis.text.y = element_text(size = 15), axis.title.x = element_text(size = 20), axis.title.y = element_text(size = 18), panel.grid = element_blank())
+  
+ggsave("KipKO_Testis_qPCR.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+
+# Ovary kipferl qPCR
+data <- data.frame(Group = c("Rsp", "359bp"), Mean = c(4.87, 8.26), STDev = c(1.98, 2.3), pVal = c("P=0.03", "P=0.008"))
+
+ upper <- data$Mean + data$STDev
+  lower <- data$Mean - data$STDev
+  
+  data$Genotype <- factor(data$Group, levels = data$Group)
+  
+  ggplot(data, aes(y = Mean, fill = Group)) +
+    geom_bar(aes(x = Group, y = Mean), stat = "identity", width = 0.6) +
+    scale_fill_manual(values=c("chocolate4", "royalblue3")) +
+    geom_errorbar(aes(x = Group, ymin = lower, ymax = upper), width = 0.1) +
+    geom_text(aes(x = Group, label = pVal, y = upper + 0.5), size = 5) +
+    geom_hline(yintercept=1, linetype='dashed', col = 'red', size = 1) +
+    labs(y = "Fold Change ± StDv") +
+    theme_minimal() +
+    theme(legend.position = "none", axis.text.x = element_text(size = 20), axis.text.y = element_text(size = 15), axis.title.x = element_text(size = 20), axis.title.y = element_text(size = 18), panel.grid = element_blank())
+  
+ggsave("KipKO_Ovary_qPCR.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+#Figure 3C
+
+```{r}
+# KipKD K values: Iso1
+data <- data.frame(
+  White = c(0.992, 0.987, 0.995, 0.985, 0.981, 0.942, 0.989, 1, 0.983),
+  Kip = c(0.847, 0.928, 0.837, 0.858, 0.896, 0.943, 0.919, NA, NA)
+)
+
+long_data <- pivot_longer(data, cols = everything(), names_to = "shRNA", values_to = "K_Val")
+
+long_data$shRNA <- factor(long_data$shRNA, levels = c("White", "Kip"))
+
+ggplot(long_data, aes(x = shRNA, y = K_Val, fill = shRNA)) +
+  geom_boxplot(outlier.shape = 21, outlier.fill = "white", outlier.color = "black") +
+  scale_x_discrete(labels = c("White" = "White shRNA",
+                              "Kip" = "Kipferl shRNA")) +
+  scale_fill_manual(values = c("darkgrey", "seagreen")) +
+  scale_y_continuous(limits = c(0.5,1)) +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title.x = element_blank())
+
+ggsave("Iso1_Bam_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+#Figure 3D
+
+```{r}
+# KipKO K values: Iso1
+data <- data.frame(
+  Homozygote = c(0.81,0.83,0.92,0.74,0.83,0.76,0.81,0.85,0.79,NA,NA,NA,NA),
+  Heterozygote = c(1,0.99,0.99,0.99,0.99,0.99,0.78,0.99,0.99,1,1,0.97,1)
+)
+
+long_data <- pivot_longer(data, cols = everything(), names_to = "genotype", values_to = "K_Val")
+
+long_data$genotype <- factor(long_data$genotype, levels = c("Heterozygote", "Homozygote"))
+
+ggplot(long_data, aes(x = genotype, y = K_Val, fill = genotype)) +
+  geom_boxplot(outlier.shape = 21, outlier.fill = "white", outlier.color = "black") +
+  scale_fill_manual(values = c("darkgrey", "seagreen")) +
+  scale_y_continuous(limits = c(0.5,1)) +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title.x = element_blank())
+
+ggsave("Iso1_KipKO_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+#Figure 4B
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  logFC_SDMad = SDMad_RspOE_SDMad_smRNA_Iso1$LogFC[match(piRNALoci, SDMad_RspOE_SDMad_smRNA_Iso1$Name)], 
+  logFC_SD5 = SD5_RspOE_SD5_smRNA_Iso1$LogFC[match(piRNALoci, SD5_RspOE_SD5_smRNA_Iso1$Name)], 
+  #logFC_SDMad_dsRed = SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$LogFC[match(piRNALoci, SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$Name)],
+  #logFC_SD5_dsRed = SD5_RspOE_dsRed_SD5_smRNA_Iso1$LogFC[match(piRNALoci, SD5_RspOE_dsRed_SD5_smRNA_Iso1$Name)],
+  p.Adj_SDMad = SDMad_RspOE_SDMad_smRNA_Iso1$p.Adj[match(piRNALoci, SDMad_RspOE_SDMad_smRNA_Iso1$Name)], 
+  p.Adj_SD5 = SD5_RspOE_SD5_smRNA_Iso1$p.Adj[match(piRNALoci, SD5_RspOE_SD5_smRNA_Iso1$Name)])
+  #p.Adj_SDMad_dsRed = SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$p.Adj[match(piRNALoci, SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$Name)], 
+  #p.Adj_SD5_dsRed = SD5_RspOE_dsRed_SD5_smRNA_Iso1$p.Adj[match(piRNALoci, SD5_RspOE_dsRed_SD5_smRNA_Iso1$Name)])
+
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 8) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "log2FC") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 20, vjust = 1, face = "italic"), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 20)) +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  ))  
+
+ggsave("smRNA_HeatPlot_RspOE.pdf", width = 10, height = 5, bg = "transparent")
+```
+
+#Figure 4C
+
+```{r}
+SDMad_1 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_1_R1.out_fam")
+SDMad_2 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_2_R1.out_fam")
+SDMad_3 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_3_R1.out_fam")
+SDMadRspOE_1 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_new_1_R1.out_fam")
+SDMadRspOE_2 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_new_2_R1.out_fam")
+SDMadRspOE_3 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_new_3_R1.out_fam")
+SD5_1 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_1_R1.out_fam")
+SD5_2 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_2_R1.out_fam")
+SD5_3 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_3_R1.out_fam")
+SD5RspOE_1 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_new_1_R1.out_fam")
+SD5RspOE_2 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_new_2_R1.out_fam")
+SD5RspOE_3 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_new_3_R_R1.out_fam")
+
+element <- "Rsp"
+SDMad_CPM <- mean(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element))
+SDMad_StD <- sd(c(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element)))
+SDMadRspOE_CPM <- mean(extractCPM(SDMadRspOE_1, element), extractCPM(SDMadRspOE_2, element), extractCPM(SDMadRspOE_3, element))
+SDMadRspOE_StD <- sd(c(extractCPM(SDMadRspOE_1, element), extractCPM(SDMadRspOE_2, element), extractCPM(SDMadRspOE_3, element)))
+SD5_CPM <- mean(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element))
+SD5_StD <- sd(c(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element)))
+SD5RspOE_CPM <- mean(extractCPM(SD5RspOE_1, element), extractCPM(SD5RspOE_2, element), extractCPM(SD5RspOE_3, element))
+SD5RspOE_StD <- sd(c(extractCPM(SD5RspOE_1, element), extractCPM(SD5RspOE_2, element), extractCPM(SD5RspOE_3, element)))
+
+# RspOE Expression Plot
+df_wide <- data.frame(
+  Condition = c("SDMad/Iso1 vs SDMad/RspOE", "SD5/Iso1 vs SD5/RspOE"),
+  Control = c(SDMad_CPM, SD5_CPM),
+  Treatment = c(SDMadRspOE_CPM, SD5RspOE_CPM),
+  StDevC = c(SDMad_StD, SD5_StD),
+  StDevT = c(SDMadRspOE_StD, SD5RspOE_StD)
+)
+
+df_wide$Condition <- factor(df_wide$Condition, levels = c("SDMad/Iso1 vs SDMad/RspOE", "SD5/Iso1 vs SD5/RspOE"))
+
+df_long <- df_wide %>%
+  dplyr::select(Condition, Control, Treatment, StDevC, StDevT) %>%
+  pivot_longer(
+    cols = c(Control, Treatment),
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(StDev = ifelse(Group == "Control", StDevC, StDevT)) %>%
+  dplyr::select(Condition, Group, Value, StDev)
+
+df_long$BarColor <- c("seagreen", "seagreen3", "dodgerblue3", "cornflowerblue")
+df_long$BarColor <- factor(df_long$BarColor, levels = c("seagreen", "seagreen3", "dodgerblue3", "cornflowerblue"))
+
+ggplot(df_long, aes(x = Condition, y = Value, fill = BarColor)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8),
+           width = 0.8, color = "black") +
+  geom_errorbar(
+    aes(ymin = Value - StDev, ymax = Value + StDev, group = BarColor),
+    position = position_dodge(width = 0.8),
+    width = 0.2
+  ) +
+  scale_fill_identity() +  # uses exact colors in BarColor
+  labs(x = "", y = expression(italic("Rsp") * " CPM")) +
+  theme_minimal() +
+  theme(axis.title.y = element_text(size = 30),
+        axis.text.y = element_text(size = 26),
+        legend.position = "none", panel.grid = element_blank())
+
+ggsave("rspOE_smRNACounts_DESeq2.pdf", width = 10, height = 6, bg = "transparent")
+```
+
+# Figure 4D
+
+```{r}
+#SDMad, III from cyo/gla
+data <- data.frame(
+  kValues = c(0.820809249,0.845070423,0.75,0.903225806,0.726190476,0.834920635,0.909465021,0.888586957,
+            0.661764706,0.731225296,0.71031746,0.668257757,0.743801653,0.721854305,0.75,0.715083799,0.691729323),
+  Genotype = c(rep("Iso1", 8), rep("RspOE", 9)))
+data$Genotype <= factor(data$Genotype, levels = c("Iso1", "RspOE"))
+
+ggplot(data, aes(x = Genotype, y = kValues, fill = Genotype)) +
+  geom_boxplot(position = position_dodge(0.7), width = 0.65) +
+  labs(x = NULL, y = expression("Prop. of " * italic("SD") * " Progeny")) +
+  scale_fill_manual(values = c("seagreen", "springgreen2")) +
+  ylim(c(0.5,1)) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 20), axis.title.y = element_text(size = 20), axis.text.x = element_text(size = 20, face = "italic"), legend.position = "none")
+
+ggsave("SDMad_RspOE_cyoglaIII_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+
+#Figure 4E
+
+```{r}
+#SD5, III from cyo/gla
+data <- data.frame(
+  kValues = c(0.996666667,0.973404255,0.965909091,0.995049505,0.983108108,0.967741935,0.994413408,1,
+              0.997844828,0.986988848,0.993814433,0.989690722,0.997252747,0.995859213,0.99382716,0.993150685,0.977272727),
+  Genotype = c(rep("Iso1", 8), rep("RspOE", 9)))
+data$Genotype <= factor(data$Genotype, levels = c("Iso1", "RspOE"))
+
+ggplot(data, aes(x = Genotype, y = kValues, fill = Genotype)) +
+  geom_boxplot(position = position_dodge(0.7), width = 0.65) +
+  labs(x = NULL, y = expression("Prop. of " * italic("SD") * " Progeny")) +
+  scale_fill_manual(values = c("dodgerblue3", "lightskyblue")) +
+  ylim(c(0.5,1)) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 20), axis.title.y = element_text(size = 20), axis.text.x = element_text(size = 20, face = "italic"), legend.position = "none")
+
+ggsave("SD5_RspOE_cyoglaIII_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+
+
+# Supplemental Figure 1
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  logFC_SDMad = SDMad_R16_smRNA_Gla$LogFC[match(piRNALoci, SDMad_R16_smRNA_Gla$Name)], logFC_SD5 = SD5_R16_smRNA_Gla$LogFC[match(piRNALoci, SD5_R16_smRNA_Gla$Name)], 
+  p.Adj_SDMad = SDMad_R16_smRNA_Gla$p.Adj[match(piRNALoci, SDMad_R16_smRNA_Gla$Name)],  p.Adj_SD5 = SD5_R16_smRNA_Gla$p.Adj[match(piRNALoci, SD5_R16_smRNA_Gla$Name)])
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 5) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "Log2FC") +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  )) +
+  scale_y_discrete(labels = c(
+    "SDMad" = "SDMad/Gla",
+    "SDRev" = "SDRev/Gla",
+    "SD5" = "SD5/Gla"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 15))
+
+ggsave("smRNA_HeatPlot_Gla.pdf", width = 10, height = 5, bg = "transparent")
+```
+
+# Supplemental Figure 5A
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  logFC_SDMad = SDMad_R16_totRNA_Repeats_Gla$LogFC[match(piRNALoci, SDMad_R16_totRNA_Repeats_Gla$Name)], logFC_SD5 = SD5_R16_totRNA_Repeats_Gla$LogFC[match(piRNALoci, SD5_R16_totRNA_Repeats_Gla$Name)], 
+  p.Adj_SDMad = SDMad_R16_totRNA_Repeats_Gla$p.Adj[match(piRNALoci, SDMad_R16_totRNA_Repeats_Gla$Name)], p.Adj_SD5 = SD5_R16_totRNA_Repeats_Gla$p.Adj[match(piRNALoci, SD5_R16_totRNA_Repeats_Gla$Name)])
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 5) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "Log2FC") +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  )) +
+  scale_y_discrete(labels = c(
+    "SDMad" = "SDMad/Gla",
+    "SD5" = "SD5/Gla"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 15))
+
+ggsave("totRNA_HeatPlot_Gla.pdf", width = 10, height = 3, bg = "transparent")
+```
+
+# Supplemental Figure 5B
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  logFC_SDMad = SDMad_R16_totRNA_Repeats_Iso1$LogFC[match(piRNALoci, SDMad_R16_totRNA_Repeats_Iso1$Name)], logFC_SD5 = SD5_R16_totRNA_Repeats_Iso1$LogFC[match(piRNALoci, SD5_R16_totRNA_Repeats_Iso1$Name)], 
+  p.Adj_SDMad = SDMad_R16_totRNA_Repeats_Iso1$p.Adj[match(piRNALoci, SDMad_R16_totRNA_Repeats_Iso1$Name)], p.Adj_SD5 = SD5_R16_totRNA_Repeats_Iso1$p.Adj[match(piRNALoci, SD5_R16_totRNA_Repeats_Iso1$Name)])
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 5) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "Log2FC") +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  )) +
+  scale_y_discrete(labels = c(
+    "SDMad" = "SDMad/Iso1",
+    "SD5" = "SD5/Iso1"
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 15))
+
+ggsave("totRNA_HeatPlot_Iso1.pdf", width = 10, height = 3, bg = "transparent")
+```
+
+# Supplemental Figure 5C
+
+```{r}
+SDMad_R16_DEList <- SDMad_R16_totRNA_Iso1[SDMad_R16_totRNA_Iso1$p.Adj <= 0.05,]
+SDMad_R16_DEList_Names <- SDMad_R16_DEList$Name
+
+SD5_R16_DEList <- SD5_R16_totRNA_Iso1[SD5_R16_totRNA_Iso1$p.Adj <= 0.05,]
+SD5_R16_DEList_Names <- SD5_R16_DEList$Name
+
+individualization_GeneSet <- read.table("Individualization_GeneSet.txt")
+colnames(individualization_GeneSet) <- c("SYMBOL", "FLYBASE")
+
+SDMad_data <- SDMad_R16_totRNA_Iso1[SDMad_R16_totRNA_Iso1$Name %in% individualization_GeneSet$FLYBASE,]
+SD5_data <- SD5_R16_totRNA_Iso1[SD5_R16_totRNA_Iso1$Name %in% individualization_GeneSet$FLYBASE,]
+merged_Data_Iso1 <- merge(SDMad_data, SD5_data, by = "Name")
+
+indData <- na.omit(data.frame(Gene = merged_Data_Iso1$SYMBOL.x, logFC_SDMad = merged_Data_Iso1$LogFC.x, p.Adj_SDMad = merged_Data_Iso1$p.Adj.x, logFC_SD5 = merged_Data_Iso1$LogFC.y, p.Adj_SD5 = merged_Data_Iso1$p.Adj.y))
+
+write_tsv(indData, "supplementalTables/individualizationTable_Iso1.tsv")
+
+df_long_indData <- indData %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    indData %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long_indData, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "log2FC") +
+  theme_minimal() +
+  geom_text(aes(label = sig, angle = 90), color = "black", size = 10, vjust = 0.75) +
+  scale_y_discrete(labels = c("SDMad" = "SDMad/Iso1", "SD5" = "SD5/Iso1")) +
+  theme(axis.text.x = element_text(size = 20, angle = 45, hjust = 1), axis.text.y = element_text(size = 30, face = "italic"), axis.title = element_blank(), legend.text = element_text(size = 40), legend.title = element_text(size = 40), legend.key.size = unit(0.5, "in")) 
+
+ggsave("individualization_HeatPlot_Iso1_Supplement.pdf", width = 25, height = 6, bg = "transparent")
+```
+
+# Supplemental Figure 6
+
+```{r}
+SDMad_R16_Gla_TEs <- SDMad_R16_totRNA_Repeats_Gla[grepl("^FBgn", SDMad_R16_totRNA_Repeats_Gla$Name) == FALSE & grepl("SAT|Rsp|1pt688|luster|sland|rDNA|AT-ChX|Low_complexity|Simple_repeat|Satellite",SDMad_R16_totRNA_Repeats_Gla$Name) == FALSE,]
+SDMad_R16_Gla_TEs <- SDMad_R16_Gla_TEs[c(1,3,5)]
+
+SDMad_R16_Iso1_TEs <- SDMad_R16_totRNA_Repeats_Iso1[grepl("^FBgn", SDMad_R16_totRNA_Repeats_Iso1$Name) == FALSE & grepl("SAT|Rsp|1pt688|sland|rDNA|AT-ChX|Low_complexity|Simple_repeat|Satellite",SDMad_R16_totRNA_Repeats_Iso1$Name) == FALSE,]
+SDMad_R16_Iso1_TEs <- SDMad_R16_Iso1_TEs[c(1,3,5)]
+
+SD5_R16_Gla_TEs <- SD5_R16_totRNA_Repeats_Gla[grepl("^FBgn", SD5_R16_totRNA_Repeats_Gla$Name) == FALSE & grepl("SAT|Rsp|1pt688|sland|rDNA|AT-ChX|Low_complexity|Simple_repeat|Satellite",SD5_R16_totRNA_Repeats_Gla$Name) == FALSE,]
+SD5_R16_Gla_TEs <- SD5_R16_Gla_TEs[c(1,3,5)]
+
+TE_Fams <- read.table("TE_Families.tsv")
+TE_Fams <- data.frame(Name = TE_Fams$V1, Family = TE_Fams$V2)
+
+
+plotData <- merge(SDMad_R16_Gla_TEs, SD5_R16_Gla_TEs, by = "Name")
+
+colnames(plotData) <- c("Name", "LogFC_SDMad", "p.adj_SDMad", "LogFC_SD5", "p.adj_SD5")
+
+df_long_plotData <- plotData %>%
+  pivot_longer(
+    cols = starts_with("LogFC"),
+    names_to = "Genotype",
+    values_to = "LogFC"
+  ) %>%
+  mutate(Genotype = sub("LogFC_", "", Genotype)) %>%
+  pivot_longer(
+    cols = starts_with("p.adj"),
+    names_to = "Genotype_p",
+    values_to = "p.adj"
+  ) %>%
+  mutate(
+    Genotype_p = sub("p.adj_", "", Genotype_p),
+    p.adj = as.numeric(p.adj)
+  ) %>%
+  filter(Genotype == Genotype_p) %>%
+  dplyr::select(Name, Genotype, LogFC, p.adj) %>%  # <-- keep Family here
+  mutate(
+    sig = ifelse(p.adj <= 0.01, 1, 0)
+  )
+
+ggplot(df_long_plotData, aes(x = Name, y = Genotype, fill = as.factor(sig))) +
+  geom_tile(color = "grey80") +
+  scale_fill_manual(values = c("0" = "white", "1" = "black")) +
+  theme_minimal(base_size = 16) +
+  scale_y_discrete(labels = c(
+    "SDMad" = "SDMad/Gla",
+    "SD5" = "SD5/Gla"
+  )) +
+  theme(axis.text.y = element_text(size = 20), axis.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1, size = 16, face = "italic"), legend.position = "none") 
+
+ ggsave("TE_Heatplot.pdf", width = 12, height = 5, bg = "transparent")
+```
+
+# Supplemental Figure 7A
+
+```{r}
+SDMadvR16_Gla_DotPlotData <- read_csv("PANGEA_Results/SDMadvR16_Gla_PANGEA.csv")
+WGCNA_PangeaDotPlot(SDMadvR16_Gla_DotPlotData, dotplotprefix = "SDMadvR16_Gla", numSets = 15)
+```
+
+# Supplemental Figure 7B
+
+```{r}
+SD5vR16_Gla_DotPlotData <- read_csv("PANGEA_Results/SD5vR16_Gla_PANGEA.csv")
+WGCNA_PangeaDotPlot(SD5vR16_Gla_DotPlotData, dotplotprefix = "SD5vR16_Gla", numSets = 15)
+```
+
+# Supplemental Figure 9B
+
+```{r}
+# piRNA Gene Relative Expression
+R16_Counts1 <- read.table("totRNA_Counts/R16-Gla-1.simplified.counts_fam")
+R16_Counts1 <- data.frame(Name = R16_Counts1$V1, NumReads = R16_Counts1$V2)
+
+R16_Counts2 <- read.table("totRNA_Counts/R16-Gla-2.simplified.counts_fam")
+R16_Counts2 <- data.frame(Name = R16_Counts2$V1, NumReads = R16_Counts2$V2)
+
+R16_Counts3 <- read.table("totRNA_Counts/R16-Gla-3.simplified.counts_fam")
+R16_Counts3 <- data.frame(Name = R16_Counts3$V1, NumReads = R16_Counts3$V2)
+
+Rhino <- c(TPM_calc(c("FBgn0004400"), R16_Counts1)$TPM, TPM_calc(c("FBgn0004400"), R16_Counts2)$TPM, TPM_calc(c("FBgn0004400"), R16_Counts3)$TPM)
+
+Kipferl <- c(TPM_calc(c("FBgn0014931"), R16_Counts1)$TPM, TPM_calc(c("FBgn0014931"), R16_Counts2)$TPM, TPM_calc(c("FBgn0014931"), R16_Counts3)$TPM)
+
+Cutoff <- c(TPM_calc(c("FBgn0260932"), R16_Counts1)$TPM, TPM_calc(c("FBgn0260932"), R16_Counts2)$TPM, TPM_calc(c("FBgn0260932"), R16_Counts3)$TPM)
+
+Bootlegger <- c(TPM_calc(c("FBgn0033374"), R16_Counts1)$TPM, TPM_calc(c("FBgn0033374"), R16_Counts2)$TPM, TPM_calc(c("FBgn0033374"), R16_Counts3)$TPM)
+
+data <- data.frame(Group = c("Rhino", "Kipferl", "Cutoff", "Bootlegger"), TPM = c(mean(Rhino), mean(Kipferl), mean(Cutoff), mean(Bootlegger)), StDev = c(sd(Rhino), sd(Kipferl), sd(Cutoff), sd(Bootlegger)))
+
+ggplot(data, aes(y = TPM, fill = Group)) +
+  geom_bar(aes(x = Group, y = TPM), stat = "identity", width = 0.6) +
+  scale_fill_manual(values=c("chocolate4", "royalblue3", "darkgreen", "goldenrod")) +
+  labs(x = NULL, y = "Fold Change ± StDv") +
+  theme_classic() +
+  geom_errorbar(aes(x = Group, ymin = data$TPM - data$StDev, ymax = data$TPM + data$StDev), width = 0.1) +
+  theme(legend.position = "none", axis.text.x = element_text(size = 20, face = "italic"), axis.text.y = element_text(size = 15), axis.title.x = element_text(size = 20), axis.title.y = element_text(size = 20), legend.text = element_text(size = 15))
+
+ggsave("piRNAGene_TPM.pdf", width = 8, height = 4, bg = "transparent")
+```
+
+# Supplemental Figure 9D
+
+```{r}
+# Kip RT Barplot
+data <- data.frame(Genotype = c("Ral309_Ovary", "KipKO_Ovary", "Ral309_Testis","KipKO_Testis"), IntDen = c(1.034, 0.027, 0.193, 0.0046))
+  
+  data$Genotype <- factor(data$Genotype, levels = data$Genotype)
+  
+  ggplot(data, aes(y = IntDen, fill = Genotype)) +
+    geom_bar(aes(x = Genotype, y = IntDen), stat = "identity", width = 0.6) +
+    scale_fill_manual(values=c("black", "black", "gray", "grey")) +
+    labs(x = NULL, y = "Ratio of IntDen (kip/rp49)") +
+    theme_classic() +
+    scale_x_discrete(labels = c(
+    "Ral309_Ovary" = "Ral309 Ovary",
+    "KipKO_Ovary" = "KipKO Ovary",
+    "Ral309_Testis" = "Ral309 Testis",
+    "KipKO_Testis" = "KipKO Testis"
+  )) +
+    theme(legend.position = "none", axis.text.x = element_text(size = 20, angle = 45, hjust = 1), axis.text.y = element_text(size = 16), axis.title.y = element_text(size = 24)) 
+    
+  
+ggsave("KipRT_Quant.pdf", width = 4, height = 6, bg = "transparent")
+```
+
+# Supplemental Figure 9E
+
+```{r}
+kipferl <- read.table("smRNA_counts/Baumgartner_2024/KipferlMutant.out_fam")
+RhinoG31D <- read.table("smRNA_counts/Baumgartner_2024/RhinoG31D.out_fam")
+RhinoMut <- read.table("smRNA_counts/Baumgartner_2024/RhinoMutant.out_fam")
+w1118 <- read.table("smRNA_counts/Baumgartner_2024/W1118.out_fam")
+
+element <- "1pt688"
+kip_CPM <- extractCPM(kipferl, element)
+RhinoG31D_CPM <- extractCPM(RhinoG31D, element)
+w1118_CPM <- extractCPM(w1118, element)
+
+data <- data.frame(Group = c("Kipferl", "Rhino G31D", "W1118"), CPM = c(kip_CPM, RhinoG31D_CPM, w1118_CPM))
+
+ggplot(data, aes(y = CPM, fill = Group)) +
+  geom_bar(aes(x = Group, y = CPM), stat = "identity", width = 0.6) +
+  scale_fill_manual(values=c("navy", "limegreen", "darkred")) +
+  labs(x = NULL, y = "CPM") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 15, face = "italic"), axis.text.y = element_text(size = 12), axis.title.x = element_text(size = 20), axis.title.y = element_text(size = 20), legend.text = element_text(size = 15))
+
+ggsave("Baumgartner_1pt688.pdf", width = 4, height = 4, bg = "transparent")
+```
+
+# Supplemental Figure 9F
+
+```{r}
+kipferl <- read.table("smRNA_counts/Baumgartner_2024/KipferlMutant.out_fam")
+RhinoG31D <- read.table("smRNA_counts/Baumgartner_2024/RhinoG31D.out_fam")
+RhinoMut <- read.table("smRNA_counts/Baumgartner_2024/RhinoMutant.out_fam")
+w1118 <- read.table("smRNA_counts/Baumgartner_2024/W1118.out_fam")
+
+element <- "Rsp"
+kip_CPM <- extractCPM(kipferl, element)
+RhinoG31D_CPM <- extractCPM(RhinoG31D, element)
+w1118_CPM <- extractCPM(w1118, element)
+
+data <- data.frame(Group = c("Kipferl", "Rhino G31D", "W1118"), CPM = c(kip_CPM, RhinoG31D_CPM, w1118_CPM))
+
+ggplot(data, aes(y = CPM, fill = Group)) +
+  geom_bar(aes(x = Group, y = CPM), stat = "identity", width = 0.6) +
+  scale_fill_manual(values=c("navy", "limegreen", "darkred")) +
+  labs(x = NULL, y = "CPM") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 15, face = "italic"), axis.text.y = element_text(size = 12), axis.title.x = element_text(size = 20), axis.title.y = element_text(size = 20), legend.text = element_text(size = 15))
+
+ggsave("Baumgartner_Rsp.pdf", width = 4, height = 4, bg = "transparent")
+```
+
+# Supplemental Figure 11A
+
+```{r}
+piRNALoci <- c("Rsp", "1pt688","piRNA_cluster_38C2", "piRNA_cluster_38C1", "piRNA_cluster_flamenco", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_42AB")
+piRNALoci <- factor(piRNALoci, levels = c("Rsp", "1pt688","piRNA_cluster_38C1","piRNA_cluster_38C2", "piRNA_cluster_42AB", "piRNA_cluster_80F", "piRNA_cluster_20A", "piRNA_cluster_flamenco"))
+gene_data <- data.frame(
+  Gene = piRNALoci, 
+  #logFC_SDMad = SDMad_RspOE_SDMad_smRNA_Iso1$LogFC[match(piRNALoci, SDMad_RspOE_SDMad_smRNA_Iso1$Name)], 
+  #logFC_SD5 = SD5_RspOE_SD5_smRNA_Iso1$LogFC[match(piRNALoci, SD5_RspOE_SD5_smRNA_Iso1$Name)], 
+  logFC_SDMad_dsRed = SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$LogFC[match(piRNALoci, SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$Name)],
+  logFC_SD5_dsRed = SD5_RspOE_dsRed_SD5_smRNA_Iso1$LogFC[match(piRNALoci, SD5_RspOE_dsRed_SD5_smRNA_Iso1$Name)],
+  #p.Adj_SDMad = SDMad_RspOE_SDMad_smRNA_Iso1$p.Adj[match(piRNALoci, SDMad_RspOE_SDMad_smRNA_Iso1$Name)], 
+  #p.Adj_SD5 = SD5_RspOE_SD5_smRNA_Iso1$p.Adj[match(piRNALoci, SD5_RspOE_SD5_smRNA_Iso1$Name)])
+  p.Adj_SDMad_dsRed = SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$p.Adj[match(piRNALoci, SDMad_RspOE_dsRed_SDMad_smRNA_Iso1$Name)], 
+  p.Adj_SD5_dsRed = SD5_RspOE_dsRed_SD5_smRNA_Iso1$p.Adj[match(piRNALoci, SD5_RspOE_dsRed_SD5_smRNA_Iso1$Name)])
+
+
+df_long <- gene_data %>%
+  pivot_longer(cols = starts_with("logFC"),
+               names_to = "Condition",
+               values_to = "logFC") %>%
+  mutate(Condition = sub("logFC_", "", Condition)) %>%
+  left_join(
+    gene_data %>%
+      pivot_longer(cols = starts_with("p.Adj"),
+                   names_to = "Condition_p",
+                   values_to = "p.Adj") %>%
+      mutate(Condition = sub("p.Adj_", "", Condition_p)) %>%
+      dplyr::select(Gene, Condition, p.Adj),
+    by = c("Gene", "Condition")
+  ) %>%
+  mutate(sig = case_when(p.Adj <= 0.001 ~ "***",p.Adj <= 0.01  ~ "**",p.Adj <= 0.05  ~ "*",TRUE ~ ""))
+
+ggplot(df_long, aes(x = Gene, y = Condition, fill = logFC)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sig), color = "black", size = 8) +
+  scale_fill_gradient2(low = "dodgerblue3", mid = "white", high = "red2", midpoint = 0, name = "log2FC") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 20, vjust = 1, face = "italic"), axis.text.y = element_text(size = 15), axis.title = element_blank(), legend.text = element_text(size = 15), legend.title = element_text(size = 20)) +
+  scale_x_discrete(labels = c(
+    "Rsp" = "Rsp",
+    "1pt688" = "1.688",
+    "piRNA_cluster_38C2" = "38C2",
+    "piRNA_cluster_38C1" = "38C1",
+    "piRNA_cluster_flamenco" = "Flamenco",
+    "piRNA_cluster_80F" = "80F",
+    "piRNA_cluster_20A" = "20A",
+    "piRNA_cluster_42AB" = "42AB"
+  ))  
+
+ggsave("smRNA_HeatPlot_RspOE-dsRed.pdf", width = 10, height = 5, bg = "transparent")
+```
+
+# Supplemental Figure 11B
+
+```{r}
+SDMad_1 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_1_R1.out_fam")
+SDMad_2 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_2_R1.out_fam")
+SDMad_3 <- read.table("smRNA_counts/all_summedbyFam/SDMad_Iso1_new_3_R1.out_fam")
+SDMadRspOE_1 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_ori_new_1_R1.out_fam")
+SDMadRspOE_2 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_ori_new_2_R1.out_fam")
+SDMadRspOE_3 <- read.table("smRNA_counts/all_summedbyFam/SDMad_RspOE_ori_new_3_R1.out_fam")
+SD5_1 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_1_R1.out_fam")
+SD5_2 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_2_R1.out_fam")
+SD5_3 <- read.table("smRNA_counts/all_summedbyFam/SD5_Iso1_new_3_R1.out_fam")
+SD5RspOE_1 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_ori_new_1_R1.out_fam")
+SD5RspOE_2 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_ori_new_2_R1.out_fam")
+SD5RspOE_3 <- read.table("smRNA_counts/all_summedbyFam/SD5_RspOE_ori_new_3_R1.out_fam")
+
+element <- "Rsp"
+SDMad_CPM <- mean(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element))
+SDMad_StD <- sd(c(extractCPM(SDMad_1, element), extractCPM(SDMad_2, element), extractCPM(SDMad_3, element)))
+SDMadRspOE_CPM <- mean(extractCPM(SDMadRspOE_1, element), extractCPM(SDMadRspOE_2, element), extractCPM(SDMadRspOE_3, element))
+SDMadRspOE_StD <- sd(c(extractCPM(SDMadRspOE_1, element), extractCPM(SDMadRspOE_2, element), extractCPM(SDMadRspOE_3, element)))
+SD5_CPM <- mean(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element))
+SD5_StD <- sd(c(extractCPM(SD5_1, element), extractCPM(SD5_2, element), extractCPM(SD5_3, element)))
+SD5RspOE_CPM <- mean(extractCPM(SD5RspOE_1, element), extractCPM(SD5RspOE_2, element), extractCPM(SD5RspOE_3, element))
+SD5RspOE_StD <- sd(c(extractCPM(SD5RspOE_1, element), extractCPM(SD5RspOE_2, element), extractCPM(SD5RspOE_3, element)))
+
+# RspOE Expression Plot
+df_wide <- data.frame(
+  Condition = c("SDMad/Iso1 vs SDMad/RspOE", "SD5/Iso1 vs SD5/RspOE"),
+  Control = c(SDMad_CPM, SD5_CPM),
+  Treatment = c(SDMadRspOE_CPM, SD5RspOE_CPM),
+  StDevC = c(SDMad_StD, SD5_StD),
+  StDevT = c(SDMadRspOE_StD, SD5RspOE_StD)
+)
+
+df_wide$Condition <- factor(df_wide$Condition, levels = c("SDMad/Iso1 vs SDMad/RspOE", "SD5/Iso1 vs SD5/RspOE"))
+
+df_long <- df_wide %>%
+  dplyr::select(Condition, Control, Treatment, StDevC, StDevT) %>%
+  pivot_longer(
+    cols = c(Control, Treatment),
+    names_to = "Group",
+    values_to = "Value"
+  ) %>%
+  mutate(StDev = ifelse(Group == "Control", StDevC, StDevT)) %>%
+  dplyr::select(Condition, Group, Value, StDev)
+
+df_long$BarColor <- c("seagreen", "seagreen3", "dodgerblue3", "cornflowerblue")
+df_long$BarColor <- factor(df_long$BarColor, levels = c("seagreen", "seagreen3", "dodgerblue3", "cornflowerblue"))
+
+ggplot(df_long, aes(x = Condition, y = Value, fill = BarColor)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8),
+           width = 0.8, color = "black") +
+  geom_errorbar(
+    aes(ymin = Value - StDev, ymax = Value + StDev, group = BarColor),
+    position = position_dodge(width = 0.8),
+    width = 0.2
+  ) +
+  scale_fill_identity() +  # uses exact colors in BarColor
+  labs(x = "", y = expression(italic("Rsp") * " CPM")) +
+  theme_minimal() +
+  theme(axis.title.y = element_text(size = 30),
+        axis.text.y = element_text(size = 26),
+        legend.position = "none", panel.grid = element_blank())
+
+ggsave("rspOE-dsRed_smRNACounts_DESeq2.pdf", width = 10, height = 6, bg = "transparent")
+```
+
+# Supplemental Figure 11C
+
+```{r}
+data <- data.frame(
+  kValues = c(0.820809249,0.845070423,0.75,0.903225806,0.726190476,0.834920635,0.909465021,0.888586957,
+              0.817857143,0.929292929,0.887530562,0.854368932,0.852130326,0.817910448,0.795977011,0.897058824,0.888888889,0.920289855),
+  Genotype = c(rep("Iso1", 8), rep("RspOE-dsRed", 10)))
+
+data$Genotype <= factor(data$Genotype, levels = c("Iso1", "RspOE-dsRed"))
+
+ggplot(data, aes(x = Genotype, y = kValues, fill = Genotype)) +
+  geom_boxplot(position = position_dodge(0.7), width = 0.65) +
+  labs(x = NULL, y = expression("Prop. of " * italic("SD") * " Progeny")) +
+  scale_fill_manual(values = c("seagreen", "springgreen2")) +
+  ylim(c(0.5,1)) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 20), axis.title.y = element_text(size = 20), axis.text.x = element_text(size = 20, face = "italic"), legend.position = "none")
+
+ggsave("SDMad_RspOEdsRed_cyoglaIII_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```
+
+# Supplemental Figure 11D
+
+```{r}
+data <- data.frame(
+  kValues = c(0.996666667,0.973404255,0.965909091,0.995049505,0.983108108,0.967741935,0.994413408,1,
+              0.986111111,0.99410609,0.991758242,1,0.990888383,0.987531172,0.978571429,0.993630573),
+  Genotype = c(rep("Iso1", 8), rep("RspOE-dsRed", 8)))
+data$Genotype <= factor(data$Genotype, levels = c("Iso1", "RspOE-dsRed"))
+
+ggplot(data, aes(x = Genotype, y = kValues, fill = Genotype)) +
+  geom_boxplot(position = position_dodge(0.7), width = 0.65) +
+  labs(x = NULL, y = expression("Prop. of " * italic("SD") * " Progeny")) +
+  scale_fill_manual(values = c("dodgerblue3", "lightskyblue")) +
+  ylim(c(0.5,1)) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 20), axis.title.y = element_text(size = 20), axis.text.x = element_text(size = 20, face = "italic"), legend.position = "none")
+
+ggsave("SD5_RspOEdsRED_cyoglaIII_Kvalue.pdf", width = 4, height = 4, units = c("in"), bg = "transparent")
+```

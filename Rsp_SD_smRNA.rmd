@@ -1,0 +1,127 @@
+---
+title: "Untitled"
+author: "Logan Edvalson"
+date: "2025-09-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+############## Iso1 Background
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("R16", 6), rep("SDMad", 6))
+files <- paste0(countDir, c("R16_Iso1_1_R_R1.out_fam","R16_Iso1_2_R1.out_fam","R16_Iso1_3_R1.out_fam","R16cnbw_1_S6_R1_001.out_fam","R16cnbw_2_S10_R1_001.out_fam","R16cnbw_R1.out_fam","SDMad_Iso1_1_R1.out_fam","SDMad_Iso1_2_R1.out_fam","SDMad_Iso1_3_R1.out_fam","SDcnbw_1_S5_R1_001.out_fam","SDcnbw_2_S9_R1_001.out_fam","SDcnbw_R1.out_fam"))
+batch <- c("batch4","batch4","batch4","batch2", "batch2", "batch1","batch4","batch4","batch4","batch2", "batch2", "batch1")
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMad", CTRL = "R16", 
+          COLOR = "seagreen", TYPE = "smRNA", BACKGROUND = "Iso1", plotWidth = 9, plotHeight = 6)
+###
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("R16", 3), rep("SD5", 3))
+files <- paste0(countDir, c("R16_Iso1_1_R_R1.out_fam","R16_Iso1_2_R1.out_fam","R16_Iso1_3_R1.out_fam","SD5_Iso1_1_R1.out_fam","SD5_Iso1_2_R1.out_fam","SD5_Iso1_3_R1.out_fam"))
+batch <- c("batch4","batch4","batch4","batch4","batch4","batch4")
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SD5", CTRL = "R16", 
+          COLOR = "dodgerblue3", TYPE = "smRNA", BACKGROUND = "Iso1", batch = batch, plotWidth = 9, plotHeight = 6)
+###
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SDMadRev", 6), rep("SDMad", 5))
+files <- paste0(countDir, c("reverseSd_Iso1_1_S18_R1_001.out_fam","reverseSd_Iso1_2_S4_R1_001.out_fam","reverseSd_Iso1_3_S5_R1_001.out_fam","reverseSd_Iso1_1_R1.out_fam","reverseSd_Iso1_2_R1.out_fam","reverseSd_Iso1_3_R1.out_fam","SDMad_Iso1_1_R1.out_fam","SDMad_Iso1_2_R1.out_fam","SDMad_Iso1_3_R1.out_fam","SDcnbw_1_S5_R1_001.out_fam","SDcnbw_2_S9_R1_001.out_fam"))
+batch <- c("batch2","batch2","batch2","batch4","batch4","batch4","batch4","batch4","batch4","batch2","batch2")
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMadRev", CTRL = "SDMad", 
+          COLOR = "seagreen", TYPE = "smRNA", BACKGROUND = "Iso1", batch = batch, plotWidth = 9, plotHeight = 6)
+###
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SDMadRev", 6), rep("R16", 5))
+files <- paste0(countDir, c("reverseSd_Iso1_1_S18_R1_001.out_fam","reverseSd_Iso1_2_S4_R1_001.out_fam","reverseSd_Iso1_3_S5_R1_001.out_fam","reverseSd_Iso1_1_R1.out_fam","reverseSd_Iso1_2_R1.out_fam","reverseSd_Iso1_3_R1.out_fam","R16_Iso1_1_R_R1.out_fam","R16_Iso1_2_R1.out_fam","R16_Iso1_3_R1.out_fam","R16cnbw_1_S6_R1_001.out_fam","R16cnbw_2_S10_R1_001.out_fam"))
+batch <- c("batch2","batch2","batch2","batch4","batch4","batch4","batch2","batch2","batch4","batch4","batch4")
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMadRev", CTRL = "R16", 
+          COLOR = "darkgoldenrod2", TYPE = "smRNA", BACKGROUND = "Iso1", batch = batch, plotWidth = 9, plotHeight = 6)
+```
+
+```{r}
+############## Gla Background
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("R16", 3), rep("SDMad", 3))
+files <- paste0(countDir, c("R16_Gla_1_S11_R1_001.out_fam","R16_Gla_2_S12_R1_001.out_fam","R16_Gla_3_S13_R1_001.out_fam","SDMad_Gla_1_S9_R1_001.out_fam","SDMad_Gla_2_S10_R1_001.out_fam","SDMad_Gla_3_S19_R1_001.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMad", CTRL = "R16", 
+          COLOR = "seagreen", TYPE = "smRNA", BACKGROUND = "Gla", plotWidth = 9, plotHeight = 6)
+###
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("R16", 3), rep("SD5", 3))
+files <- paste0(countDir, c("R16_Gla_1_S11_R1_001.out_fam","R16_Gla_2_S12_R1_001.out_fam","R16_Gla_3_S13_R1_001.out_fam","SD5_Gla_1_S6_R1_001.out_fam","SD5_Gla_2_S7_R1_001.out_fam","SD5_Gla_3_S8_R1_001.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SD5", CTRL = "R16", 
+          COLOR = "dodgerblue3", TYPE = "smRNA", BACKGROUND = "Gla", plotWidth = 9, plotHeight = 6)
+
+```
+
+# RspOE
+
+```{r}
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SDMad", 3), rep("SDMad_RspOE", 3))
+files <- paste0(countDir, c("SDMad_Iso1_new_1_R1.out_fam","SDMad_Iso1_new_2_R1.out_fam","SDMad_Iso1_new_3_R1.out_fam","SDMad_RspOE_new_1_R1.out_fam","SDMad_RspOE_new_2_R1.out_fam","SDMad_RspOE_new_3_R1.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMad_RspOE", CTRL = "SDMad", 
+          COLOR = "seagreen", TYPE = "smRNA", BACKGROUND = "Iso1", plotWidth = 9, plotHeight = 6)
+
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SDMad", 3), rep("SDMad_RspOE_dsRed", 3))
+files <- paste0(countDir, c("SDMad_Iso1_new_1_R1.out_fam","SDMad_Iso1_new_2_R1.out_fam","SDMad_Iso1_new_3_R1.out_fam","SDMad_RspOE_ori_new_1_R1.out_fam","SDMad_RspOE_ori_new_2_R1.out_fam","SDMad_RspOE_ori_new_3_R1.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SDMad_RspOE_dsRed", CTRL = "SDMad", 
+          COLOR = "seagreen", TYPE = "smRNA", BACKGROUND = "Iso1", plotWidth = 9, plotHeight = 6)
+############
+
+```
+
+```{r}
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SD5", 3), rep("SD5_RspOE", 3))
+files <- paste0(countDir, c("SD5_Iso1_new_1_R1.out_fam","SD5_Iso1_new_2_R1.out_fam","SD5_Iso1_new_3_R1.out_fam","SD5_RspOE_new_1_R1.out_fam","SD5_RspOE_new_2_R1.out_fam", "SD5_RspOE_new_3_R_R1.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SD5_RspOE", CTRL = "SD5", 
+          COLOR = "dodgerblue3", TYPE = "smRNA", BACKGROUND = "Iso1", plotWidth = 9, plotHeight = 6)
+
+countDir <- c("smRNA_counts/all_summedbyFam/")
+groups <- c(rep("SD5", 3), rep("SD5_RspOE_dsRed", 3))
+files <- paste0(countDir, c("SD5_Iso1_new_1_R1.out_fam","SD5_Iso1_new_2_R1.out_fam","SD5_Iso1_new_3_R1.out_fam","SD5_RspOE_ori_new_1_R1.out_fam","SD5_RspOE_ori_new_2_R1.out_fam","SD5_RspOE_ori_new_3_R1.out_fam"))
+countMatrix <- load_counts(files, groups, filter_pattern = "\\)n|dodeca|undeca|rDNA|FBgn", miRNA_list = miRNA_List)
+
+DESeq2_DE(countMatrix, EXP = "SD5_RspOE_dsRed", CTRL = "SD5", 
+          COLOR = "dodgerblue3", TYPE = "smRNA", BACKGROUND = "Iso1", plotWidth = 9, plotHeight = 6)
+```
+
+
+
+# Summary Data
+
+```{r}
+print("SDMad/Gla vs R16/Gla")
+length(na.omit(SDMad_R16_smRNA_Gla$Name[SDMad_R16_smRNA_Gla$p.Adj <= 0.01])) / length(na.omit(SDMad_R16_smRNA_Gla$Name))
+
+print("SD5/Gla vs R16/Gla")
+length(na.omit(SD5_R16_smRNA_Gla$Name[SD5_R16_smRNA_Gla$p.Adj <= 0.01])) / length(na.omit(SD5_R16_smRNA_Gla$Name))
+
+print("SDMad/Iso1 vs R16/Iso1")
+length(na.omit(SDMad_R16_smRNA_Iso1$Name[SDMad_R16_smRNA_Iso1$p.Adj <= 0.01])) / length(na.omit(SDMad_R16_smRNA_Iso1$Name))
+
+print("SD5/Iso1 vs R16/Iso1")
+length(na.omit(SD5_R16_smRNA_Iso1$Name[SD5_R16_smRNA_Iso1$p.Adj <= 0.01])) / length(na.omit(SD5_R16_smRNA_Iso1$Name))
+```
